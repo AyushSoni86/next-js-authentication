@@ -11,20 +11,17 @@ export const POST = async (request: NextRequest) => {
     const { email, password } = await request.json();
     const user = await userModel.findOne({ email });
     if (!user) {
-      return NextResponse.json(
-        { error: "user does not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "User not Found" }, { status: 400 });
     }
     const verifiedPassword = await bcrypt.compare(password, user.password);
 
     if (!verifiedPassword) {
-      return NextResponse.json(
-        { error: "check y our credentials" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid Password" }, { status: 400 });
     }
 
+    if (!user.isVerified) {
+      return NextResponse.json({ error: "User not Verified" }, { status: 400 });
+    }
     const tokenData = {
       id: user._id,
       username: user.username,

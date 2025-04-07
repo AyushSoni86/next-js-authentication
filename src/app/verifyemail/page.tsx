@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -9,12 +9,13 @@ const VerifyEmail = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const verifyEmail = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/verifyemail", { token });
+      const response = await axios.post("/api/users/verifyemail", { token });
       setIsVerified(true);
       setError(false);
       toast.success(response?.data.message || "Email verified successfully!");
@@ -29,18 +30,12 @@ const VerifyEmail = () => {
   };
 
   useEffect(() => {
-    const { query } = router;
-    const urlToken = query.token as string;
+    const urlToken = searchParams.get("token");
+    console.log("🚀 ~ useEffect ~ urlToken:", urlToken)
     if (urlToken) {
       setToken(urlToken);
     }
   }, [router]);
-
- useEffect(() => {
-   if (token) {
-     verifyEmail();
-   }
- }, [token]);
 
   return (
     <div className="p-6">
@@ -49,17 +44,42 @@ const VerifyEmail = () => {
           Verify your email
         </header>
 
-        <p className="text-gray-500 text-sm">
-          We’ve sent a verification link to your email. Please click the button
-          below to verify and activate your account.
-        </p>
+        {loading && <p className="text-sm text-gray-500">Verifying...</p>}
 
-        <button
-          onClick={verifyEmail}
-          className="block w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400"
-        >
-          Verify My Email
-        </button>
+        {!loading && isVerified && (
+          <div className="space-y-4">
+            <p className="text-green-600 font-medium">
+              ✅ Email verified successfully!
+            </p>
+            <button
+              onClick={() => router.push("/login")}
+              className="w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400"
+            >
+              Click here to Login
+            </button>
+          </div>
+        )}
+
+        {!loading && error && (
+          <p className="text-red-500 font-medium">
+            ❌ Error verifying email. Please try again later.
+          </p>
+        )}
+
+        {!loading && !isVerified && !error && (
+          <>
+            <p className="text-gray-500 text-sm">
+              We’ve sent a verification link to your email. Please click the
+              button below to verify and activate your account.
+            </p>
+            <button
+              onClick={verifyEmail}
+              className="block w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400"
+            >
+              Verify My Email
+            </button>
+          </>
+        )}
 
         <div className="flex flex-col items-center space-y-4">
           <button className="text-sm text-blue-500 hover:underline">

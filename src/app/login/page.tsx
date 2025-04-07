@@ -16,15 +16,15 @@ const Login = () => {
 
   const handleLogin = async () => {
     setLoading(true);
-    console.log("Singup");
     try {
+      setError("");
       const response: any = await axios.post("/api/users/login", userDetails);
-      console.log("🚀 ~ handleSignup ~ response:", response);
       router.push("/profile");
       toast.success(response?.data.message);
     } catch (error: any) {
-      console.log("login failed");
-      toast.error(error.message);
+      console.log("login failed::\n ", error.response?.data.error);
+      toast.error(error.response?.data.error);
+      setError(error.response?.data.error);
     } finally {
       setLoading(false);
     }
@@ -49,6 +49,12 @@ const Login = () => {
               type="text"
               placeholder="Email or username"
               className="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+              onChange={(e) =>
+                setUserDetails((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+              }
             />
           </div>
           <div className="flex w-full items-center space-x-2 rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
@@ -56,6 +62,12 @@ const Login = () => {
               type="password"
               placeholder="Password"
               className="my-3 w-full border-none bg-transparent outline-none"
+              onChange={(e) =>
+                setUserDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
             />
             <a
               href="#"
@@ -64,9 +76,13 @@ const Login = () => {
               FORGOT?
             </a>
           </div>
-          <button className="w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400">
-            LOG IN
+          <button
+            onClick={handleLogin}
+            className="w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400"
+          >
+            {loading ? "LOGGING IN..." : "LOG IN"}
           </button>
+          {error && <div className="w-full px-4 text-red-500">{error}</div>}
         </div>
 
         <div className="flex items-center space-x-4">
