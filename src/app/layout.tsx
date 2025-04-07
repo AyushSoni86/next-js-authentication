@@ -1,5 +1,6 @@
 "use client";
 
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Link from "next/link";
 export default function RootLayout({
@@ -10,6 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-100">
+        <Toaster position="top-right" reverseOrder={false} />
         <div className="flex w-100 gap-7 m-5">
           <button
             type="button"

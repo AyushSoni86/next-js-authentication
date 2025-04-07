@@ -1,6 +1,44 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const router = useRouter();
+  const [userDetails, setUserDetails] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    setLoading(true);
+    console.log("Singup");
+    try {
+      const response: any = await axios.post("/api/users/login", userDetails);
+      console.log("🚀 ~ handleSignup ~ response:", response);
+      router.push("/profile");
+      toast.success(response?.data.message);
+    } catch (error: any) {
+      console.log("login failed");
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userDetails.email.length > 0 && userDetails.password.length > 0) {
+      setButtonDisabled(true);
+    } else {
+      setButtonDisabled(true);
+      setError("");
+    }
+  }, [userDetails]);
+
   return (
     <div className="p-6">
       <div className="absolute left-1/2 top-1/2 mx-auto max-w-sm -translate-x-1/2 -translate-y-1/2 transform space-y-4 text-center">
