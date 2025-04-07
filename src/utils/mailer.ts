@@ -3,18 +3,23 @@ import nodemailer from "nodemailer";
 import { v4 as uuidv4 } from "uuid";
 
 export const sendmail = async ({ email, emailType, userId }: any) => {
+  console.log("🚀 ~ sendmail ~ emailType:", emailType)
   try {
     const hashedToken = uuidv4();
 
     if (emailType === "VERIFY") {
-      userModel.findOneAndUpdate(userId, {
-        verifyToken: hashedToken,
-        verifyTokenExpiry: Date.now() + 36000000,
+      await userModel.findOneAndUpdate(userId, {
+        $set: {
+          verifyToken: hashedToken,
+          verifyTokenExpiry: Date.now() + 36000000,
+        },
       });
     } else if (emailType === "RESET") {
-      userModel.findOneAndUpdate(userId, {
-        forgotPasswordToken: hashedToken,
-        forgotPasswordTokenExpiry: Date.now() + 36000000,
+      await userModel.findOneAndUpdate(userId, {
+        $set: {
+          forgotPasswordToken: hashedToken,
+          forgotPasswordTokenExpiry: Date.now() + 36000000,
+        },
       });
     }
 
@@ -42,7 +47,6 @@ export const sendmail = async ({ email, emailType, userId }: any) => {
 
     const mailResponse = await transporter.sendMail(mailOptions);
     return mailResponse;
-    
   } catch (error: any) {
     throw new Error(error.message);
   }
