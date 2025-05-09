@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 const Signup = () => {
@@ -19,15 +19,17 @@ const Signup = () => {
   const handleSignup = async () => {
     setLoading(true);
     try {
-      const response: any = await axios.post("/api/users/signup", userDetails);
+      const response = await axios.post("/api/users/signup", userDetails);
       router.push("/login");
-      toast.success(response?.data.message);
-    } catch (error: any) {
-      if (error.status === 400) {
-        toast.error(error.response.data.error);
+      toast.success(response?.data.message || "Signup successful!");
+    } catch (err) {
+      const error = err as AxiosError<{ error: string }>;
+
+      if (error.response?.status === 400) {
+        toast.error(error.response.data?.error || "Invalid signup details.");
       } else {
-        console.log("signup failed");
-        toast.error(error.message);
+        console.error("Signup failed:", error.message);
+        toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setLoading(false);

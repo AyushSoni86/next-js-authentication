@@ -1,5 +1,6 @@
 "use client";
-import axios from "axios";
+
+import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -19,8 +20,9 @@ const VerifyEmail = () => {
       setIsVerified(true);
       setError(false);
       toast.success(response?.data.message || "Email verified successfully!");
-    } catch (error: any) {
-      console.log("Email verification failed", error);
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      console.error("Email verification failed", error);
       setError(true);
       setIsVerified(false);
       toast.error(error.response?.data?.message || "Error verifying email.");
@@ -34,7 +36,7 @@ const VerifyEmail = () => {
     if (urlToken) {
       setToken(urlToken);
     }
-  }, [router]);
+  }, [searchParams]);
 
   return (
     <div className="p-6">
@@ -68,8 +70,8 @@ const VerifyEmail = () => {
         {!loading && !isVerified && !error && (
           <>
             <p className="text-gray-500 text-sm">
-              We’ve sent a verification link to your email. Please click the
-              button below to verify and activate your account.
+              We&rsquo;ve sent a verification link to your email. Please click
+              the button below to verify and activate your account.
             </p>
             <button
               onClick={verifyEmail}
@@ -82,13 +84,13 @@ const VerifyEmail = () => {
 
         <div className="flex flex-col items-center space-y-4">
           <button className="text-sm text-blue-500 hover:underline">
-            Didn't get the email? Resend
+            Didn&rsquo;t get the email? Resend
           </button>
         </div>
 
         <footer className="mt-12 text-xs text-gray-400">
-          If you don’t see the email, check your spam folder or try a different
-          email.
+          If you don&rsquo;t see the email, check your spam folder or try a
+          different email.
         </footer>
       </div>
     </div>

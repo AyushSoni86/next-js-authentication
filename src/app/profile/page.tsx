@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -14,11 +15,11 @@ const Profile = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get("/api/users/profile");
-      const userdetails = response?.data.data;
-      setUser(userdetails);
-    } catch (err: any) {
+      setUser(response?.data.data);
+    } catch (err) {
+      const error = err as AxiosError;
       toast.error("Failed to fetch profile");
-      console.error(err);
+      console.error("Profile fetch error:", error.message);
     }
   };
 
@@ -34,22 +35,27 @@ const Profile = () => {
             My Profile
           </header>
 
-          {user?.profileImage ? (
-            <img
-              src={user.profileImage}
-              alt="Profile"
-              className="mx-auto h-24 w-24 rounded-full object-cover ring-2 ring-blue-400"
-            />
+          {user.profileImage ? (
+            <div className="mx-auto h-24 w-24 relative">
+              <Image
+                src={user.profileImage}
+                alt="Profile image"
+                fill
+                className="rounded-full object-cover ring-2 ring-blue-400"
+                sizes="96px"
+              />
+            </div>
           ) : (
             <div className="mx-auto h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xl font-bold ring-2 ring-gray-300">
-              {user?.username?.charAt(0)?.toUpperCase() || "U"}
+              {user.username.charAt(0).toUpperCase() || "U"}
             </div>
           )}
+
           <div className="space-y-2">
             <p className="text-lg font-medium text-gray-700">
-              {user?.username || "Unnamed User"}
+              {user.username || "Unnamed User"}
             </p>
-            <p className="text-sm text-gray-500">{user?.email || "No email"}</p>
+            <p className="text-sm text-gray-500">{user.email || "No email"}</p>
           </div>
 
           <button
