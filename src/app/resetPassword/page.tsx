@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 
@@ -35,9 +35,14 @@ const ResetPassword = () => {
       });
       toast.success(response.data.message || "Password reset successful!");
       router.push("/login");
-    } catch (error: any) {
-      setError(error.response?.data?.error || "Something went wrong.");
-      toast.error(error.response?.data?.error || "Error resetting password.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setError(error.response?.data?.error || "Something went wrong.");
+        toast.error(error.response?.data?.error || "Error resetting password.");
+      } else {
+        setError("An unexpected error occurred.");
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
