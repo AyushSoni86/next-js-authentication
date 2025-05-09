@@ -2,32 +2,48 @@ import { userModel } from "@/models/userModel";
 import nodemailer from "nodemailer";
 import { v4 as uuidv4 } from "uuid";
 
-export const sendmail = async ({ email, emailType, userId }: any) => {
+interface SendMailParams {
+  email: string;
+  emailType: "VERIFY" | "RESET";
+  userId: string;
+}
+
+export const sendmail = async ({
+  email,
+  emailType,
+  userId,
+}: SendMailParams) => {
   try {
     const hashedToken = uuidv4();
 
     if (emailType === "VERIFY") {
-      await userModel.findOneAndUpdate(userId, {
-        $set: {
-          verifyToken: hashedToken,
-          verifyTokenExpiry: Date.now() + 36000000,
-        },
-      });
+      await userModel.findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            verifyToken: hashedToken,
+            verifyTokenExpiry: Date.now() + 36000000,
+          },
+        }
+      );
     } else if (emailType === "RESET") {
-      await userModel.findOneAndUpdate(userId, {
-        $set: {
-          forgotPasswordToken: hashedToken,
-          forgotPasswordTokenExpiry: Date.now() + 36000000,
-        },
-      });
+      await userModel.findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            forgotPasswordToken: hashedToken,
+            forgotPasswordTokenExpiry: Date.now() + 36000000,
+          },
+        }
+      );
     }
 
     const transporter = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
       auth: {
-        user: process.env.MAILTRAP_USER,
-        pass: process.env.MAILTRAP_PASS,
+        user: process.env.MAILTRAP_USER!,
+        pass: process.env.MAILTRAP_PASS!,
       },
     });
 
@@ -44,9 +60,13 @@ export const sendmail = async ({ email, emailType, userId }: any) => {
       html: emailType === "VERIFY" ? verifyEmailHtml : resetPasswordHtml,
     };
 
+    // Send the email and return the response
     const mailResponse = await transporter.sendMail(mailOptions);
     return mailResponse;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("An unknown error occurred");
   }
 };

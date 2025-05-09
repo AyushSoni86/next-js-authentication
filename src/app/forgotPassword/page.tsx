@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -14,13 +14,27 @@ const ForgotPassword = () => {
     setLoading(true);
     setError("");
     try {
+      // Validate email before submitting
+      if (!email) {
+        setError("Please enter your email.");
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.post("/api/users/forgotPassword", {
         email,
       });
       toast.success(response.data.message || "Reset link sent!");
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Something went wrong.");
-      toast.error(error.response?.data?.message || "Error sending reset link.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setError(error.response?.data?.message || "Something went wrong.");
+        toast.error(
+          error.response?.data?.message || "Error sending reset link."
+        );
+      } else {
+        setError("An unexpected error occurred.");
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -38,7 +52,9 @@ const ForgotPassword = () => {
             type="email"
             placeholder="Email"
             className="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         {error && <div className="text-red-500">{error}</div>}
