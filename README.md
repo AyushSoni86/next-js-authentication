@@ -30,7 +30,7 @@ A complete authentication system built with **Next.js**, **MongoDB**, and **Node
 
 ## 🧪 Live Preview
 
-Coming soon.
+https://next-js-authentication-x4q8.vercel.app/
 
 ## 📦 Getting Started
 
