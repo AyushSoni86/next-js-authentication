@@ -18,15 +18,17 @@ const Signup = () => {
 
   const handleSignup = async () => {
     setLoading(true);
-    console.log("Singup");
     try {
       const response: any = await axios.post("/api/users/signup", userDetails);
-      console.log("🚀 ~ handleSignup ~ response:", response)
       router.push("/login");
       toast.success(response?.data.message);
     } catch (error: any) {
-      console.log("signup failed");
-      toast.error(error.message);
+      if (error.status === 400) {
+        toast.error(error.response.data.error);
+      } else {
+        console.log("signup failed");
+        toast.error(error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -111,12 +113,27 @@ const Signup = () => {
           {error && <div className="w-full px-4 text-red-500">{error}</div>}
           <button
             onClick={() => handleSignup()}
-            className={`w-full rounded-2xl border-b-4 border-b-blue-600   py-3 font-bold text-white  active:translate-y-[0.125rem] active:border-b-blue-400 cursor-pointer ${
-              buttonDisabled ? "bg-gray-400 " : "bg-blue-500 hover:bg-blue-400"
+            className={`w-full rounded-2xl border-b-4 py-3 font-bold text-white  active:translate-y-[0.125rem] active:border-b-blue-400 cursor-pointer ${
+              buttonDisabled
+                ? "border-b-gray-500 bg-gray-400 "
+                : "border-b-blue-600 bg-blue-500 hover:bg-blue-400"
             }`}
             disabled={buttonDisabled}
           >
             {loading ? "PROCESSING...." : "CREATE ACCOUNT"}
+          </button>
+
+          <div className="flex items-center space-x-4">
+            <hr className="w-full border border-gray-300" />
+            <div className="font-semibold text-gray-400">OR</div>
+            <hr className="w-full border border-gray-300" />
+          </div>
+
+          <button
+            onClick={() => router.push("/login")}
+            className={`w-full rounded-2xl border-b-4 border-b-blue-600 py-3 font-bold text-white active:translate-y-[0.125rem] active:border-b-blue-400 cursor-pointer bg-blue-500 hover:bg-blue-400`}
+          >
+            LOGIN HERE
           </button>
         </div>
       </div>

@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔐 Next.js Authentication System
 
-## Getting Started
+A complete authentication system built with **Next.js**, **MongoDB**, and **Nodemailer** featuring:
 
-First, run the development server:
+- ✅ Email verification
+- ✅ Forgot password flow
+- ✅ JWT-based sessions
+- ✅ Mailtrap integration for email testing
+- ✅ Fully customizable and secure
+
+## ✨ Features
+
+- ✅ Register and login with email and password
+- ✅ Secure email verification using unique tokens
+- ✅ Forgot and reset password via email
+- ✅ Protected routes (e.g., Profile)
+- ✅ API-based architecture
+- ✅ Responsive, minimal UI
+
+## 🛠️ Tech Stack
+
+- **Next.js 15**
+- **React 19**
+- **MongoDB + Mongoose**
+- **Nodemailer + Mailtrap**
+- **JWT** for session tokens
+- **UUID** for generating secure tokens
+- **Tailwind CSS** for styling
+- **Axios** for HTTP requests
+
+## 🧪 Live Preview
+
+Coming soon.
+
+## 📦 Getting Started
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/your-username/next-js-authentication.git
+cd next-js-authentication
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Rename `.env.sample` to `.env` and update the following:
+
+```
+MONGO_URI=your_mongo_uri
+TOKEN_SECRET=your_jwt_secret
+DOMAIN=http://localhost:3000
+MAILTRAP_USER=your_mailtrap_user
+MAILTRAP_PASS=your_mailtrap_pass
+```
+
+You can get Mailtrap credentials by signing up at [mailtrap.io](https://mailtrap.io).
+
+## 🚀 Run the App
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+/app
+  ├── api
+  │   ├── users (register, login, resetPassword, etc.)
+  ├── profile/page.tsx (protected page)
+  └── layout.tsx, page.tsx
 
-## Learn More
+/models
+  └── userModel.ts (Mongoose schema)
 
-To learn more about Next.js, take a look at the following resources:
+/utils
+  └── sendmail.ts (Nodemailer logic)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+.env.sample
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ✉️ Email Logic
 
-## Deploy on Vercel
+Emails are handled by [Nodemailer](https://nodemailer.com/) with Mailtrap for local testing.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Verification: `/verifyemail?token=`
+- Password reset: `/resetPassword?token=`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tokens are valid for 10 hours (`Date.now() + 36000000`).
+
+## 🛡️ Security Notes
+
+- Tokens are generated using `uuidv4()` and saved with expiration.
+- Add rate-limiting or CAPTCHA in production to prevent abuse.
+- Consider hashing tokens in production for added security.
+
+## 📄 License
+
+MIT — Free to use and modify.
+
+## 💡 Author
+
+Made with ❤️ by **Ayush Soni**
+[GitHub Repo](https://github.com/AyushSoni86/next-js-authentication)
+
+---

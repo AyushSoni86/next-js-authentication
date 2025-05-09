@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 import { v4 as uuidv4 } from "uuid";
 
 export const sendmail = async ({ email, emailType, userId }: any) => {
-  console.log("🚀 ~ sendmail ~ emailType:", emailType)
   try {
     const hashedToken = uuidv4();
 
@@ -27,14 +26,14 @@ export const sendmail = async ({ email, emailType, userId }: any) => {
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
       auth: {
-        user: "167fe182af890a",
-        pass: "2498872d5ea373",
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
       },
     });
 
     const verifyEmailHtml = `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to verify your email or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}</p>`;
 
-    const resetPasswordHtml = `<p>Click <a href="${process.env.DOMAIN}/resetpassword?token=${hashedToken}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/resetpassword?token=${hashedToken}</p>`;
+    const resetPasswordHtml = `<p>Click <a href="${process.env.DOMAIN}/resetPassword?token=${hashedToken}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/resetPassword?token=${hashedToken}</p>`;
 
     const mailOptions = {
       from: '"Ayush Soni 👻" <ayusoni86@gmail.com>',

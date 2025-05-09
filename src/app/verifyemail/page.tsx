@@ -31,7 +31,6 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const urlToken = searchParams.get("token");
-    console.log("🚀 ~ useEffect ~ urlToken:", urlToken)
     if (urlToken) {
       setToken(urlToken);
     }

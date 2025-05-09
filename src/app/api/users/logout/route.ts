@@ -6,7 +6,7 @@ connect();
 export const GET = async (request: NextRequest) => {
   try {
     const response = NextResponse.json({
-      message: "Logout Seccussfully",
+      message: "Logout Successfully",
       success: true,
     });
 

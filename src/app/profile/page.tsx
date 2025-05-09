@@ -14,7 +14,6 @@ const Profile = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get("/api/users/profile");
-      console.log("🚀 ~ fetchUserProfile ~ response:", response.data);
       const userdetails = response?.data.data;
       setUser(userdetails);
     } catch (err: any) {

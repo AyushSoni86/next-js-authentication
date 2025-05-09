@@ -25,7 +25,6 @@ export const POST = async (request: NextRequest) => {
       password: hashedPassword,
     });
     const savedUser = await newUser.save();
-    console.log("Saved response::>>", savedUser);
     await sendmail({ email, emailType: "VERIFY", userId: savedUser._id });
     return NextResponse.json({
       message: "User Registered Successfully",
