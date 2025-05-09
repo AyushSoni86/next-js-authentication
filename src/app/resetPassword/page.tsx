@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, Suspense } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-const ResetPassword = () => {
+const ResetPasswordForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [token, setToken] = useState("");
@@ -84,5 +85,11 @@ const ResetPassword = () => {
     </div>
   );
 };
+
+const ResetPassword = () => (
+  <Suspense fallback={<div className="text-center p-10">Loading...</div>}>
+    <ResetPasswordForm />
+  </Suspense>
+);
 
 export default ResetPassword;

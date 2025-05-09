@@ -2,10 +2,10 @@
 
 import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const VerifyEmail = () => {
+const VerifyEmailPage = () => {
   const [token, setToken] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState(false);
@@ -96,5 +96,11 @@ const VerifyEmail = () => {
     </div>
   );
 };
+
+const VerifyEmail = () => (
+  <Suspense fallback={<div className="text-center p-10">Loading...</div>}>
+    <VerifyEmailPage />
+  </Suspense>
+);
 
 export default VerifyEmail;
